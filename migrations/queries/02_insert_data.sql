@@ -12,12 +12,12 @@ INSERT INTO sls_sls (
   "hotPercentage",
   "restrictionExpires"
 ) VALUES 
-  ('3c144f2f-bc35-4ecd-8fa3-b2a9f012c284',30, 100, 75, 15), 
-  ('2ceac662-9d52-4ddd-bf05-7ec04818615e',20, 150, 80, 15);
+  ('3c144f2f-bc35-4ecd-8fa3-b2a9f012c284',10, 1000, 75, 5), 
+  ('2ceac662-9d52-4ddd-bf05-7ec04818615e',20, 950, 80, 5);
 
 INSERT INTO sls_ticket (
   "deviceId",
   "stake",
   "timestamp"
 ) VALUES 
-  ('2ceac662-9d52-4ddd-bf05-7ec04818615e',200, NOW());
+  ('2ceac662-9d52-4ddd-bf05-7ec04818615e',50, NOW());
