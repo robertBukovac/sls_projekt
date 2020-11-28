@@ -15,6 +15,7 @@ const createTicket = asyncHandler(async (req, res, next) => {
 	const { stake } = req.body;
 	const uuid = uuidv4()
 
+	// Load queries
 	const querySls = await loadQuery(`${queryPath}get-sls.sql`);
 	const queryTicket = await loadQuery(`${queryPath}get-tickets-device.sql`);
 	const queryCreate = await loadQuery(`${queryPath}create-blocked_dev.sql`);
@@ -22,12 +23,9 @@ const createTicket = asyncHandler(async (req, res, next) => {
 	const queryIsBlocked = await loadQuery(`${queryPath}get-blocked.sql`);
 	const queryInsert = await loadQuery(`${queryPath}create-ticket.sql`);
 
-	// Current time
+
 	let CurrentDate = moment().tz('Europe/Sarajevo')
-
 	let {rows:blocked} = await psql.query(queryIsBlocked,[deviceId]);
-
-
 	if( blocked.length >= 1 && (blocked[0].blockedUntil.toISOString() > CurrentDate.toISOString()  || blocked[0].perminentRestriction === true)) {
 		return next(new ErrorResponse(`Device is blocked`),404)
 	}else {
@@ -75,7 +73,7 @@ const getTicket = asyncHandler(async (req, res, next) => {
 	const query = await loadQuery(`${queryPath}get-ticket.sql`);
 
 
-	const {rows} = await psql.query(query, [id],(err, results) => {
+	psql.query(query, [id],(err, results) => {
 		if (err) return next(new ErrorResponse('Something went wrong', 404));
 		return res.status(200).json({status:true,data:results.rows[0]})
 	});
@@ -92,7 +90,7 @@ const getTickets = asyncHandler(async (req, res, next) => {
 
 	psql.query(query, (err, results) => {
         if (err) return next(new ErrorResponse('Something went wrong', 404));
-		return res.status(200).json({status:true,data:results.rows})
+		return res.status(200).json({status:true,data:results.rows,message:'All tickets !'})
 	});
 });
 

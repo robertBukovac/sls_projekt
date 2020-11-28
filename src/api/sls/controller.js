@@ -20,7 +20,7 @@ const createSls = asyncHandler(async (req, res, next) => {
 	
 	if (timeDuration >= 5 && timeDuration <= 1440 && stakeLimit >= 1 && stakeLimit <= 100000 && hotPercentage >= 1 && hotPercentage <= 100 && restrictionExpires >1 ){
 		psql.query(query, [deviceId,timeDuration,stakeLimit,hotPercentage,restrictionExpires], (err, results) => {
-			if (err) return (err, next);
+			if (err) return next( new ErrorResponse(`Something went wrong`, 404))
 			return res.status(201).json({status:true,data:results.rows[0],message: 'Sls successfully created !'})});
 	}else{
 		return next(new ErrorResponse('Please provide valid sls values', 400))}
@@ -42,7 +42,7 @@ const getSls = asyncHandler(async (req, res, next) => {
 		if (err || typeof results.rows[0] === 'undefined') return next(
 			new ErrorResponse(`No sls with id of ${id}`, 404)
 		  );
-		return res.status(200).json({status:true,data:results.rows[0]})
+		return res.status(200).json({status:true,data:results.rows[0],message: 'The Stake limit services you want !'})
 	});
 });
 
@@ -54,9 +54,8 @@ const getAllSls = asyncHandler(async (req, res, next) => {
 	const query = await loadQuery(`${queryPath}get-all-sls.sql`);
 
 	psql.query(query, (err, results) => {
-        if (err) return next(
-			new ErrorResponse('Something went wrong', 404));
-		return res.status(200).json({status:true,data:results.rows})
+        if (err) return next(new ErrorResponse('Something went wrong', 404));
+		return res.status(200).json({status:true,data:results.rows,message: 'All the Stake limit services you want !'})
 	});
 });  
 
@@ -66,9 +65,7 @@ const getAllSls = asyncHandler(async (req, res, next) => {
 
 const updateSls= asyncHandler(async (req, res, next) => {
 	const id = parseInt(req.params.id);
-	const query = generateInsertUserQuery({ id, ...req.body });
-	console.log(id)
-
+	const query = generateInsertSlsQuery({ id, ...req.body });
 
 	psql.query(query,  async(err, results) => {
 		if (err) return next( new ErrorResponse('Something went wrong', 404));
@@ -78,27 +75,6 @@ const updateSls= asyncHandler(async (req, res, next) => {
 });
 
 
-/*
-const updateUser: ReqResNextCallback = catchAsync(async (req, res, next) => {
-	const id = parseInt(req.params.id, 10);
-
-	if (req.body.password) {
-		req.body.password = await bcrypt.hash(req.body.password, 10);
-	}
-
-	const query = generateInsertUserQuery({ id, ...req.body });
-
-	psql.query(query, async (err, results) => {
-		if (err) return handlePsqlError(err, next);
-		const user = results.rows[0];
-		if (!user) next(new AppException({}, 'User does not exist!'));
-		const accessToken = await jwt.updateToken({ result: user }, res.locals.accessToken);
-
-		handleSuccessfulJsonResponse(res, 200, { user: results.rows && results.rows[0], accessToken: accessToken });
-	});
-});
-
-*/
 
 // @desc DELETE sls 
 // @route DELETE /api/v1/sls/:id
