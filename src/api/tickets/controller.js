@@ -26,8 +26,6 @@ const createTicket = asyncHandler(async (req, res, next) => {
 
 	let currentDate = moment().tz('Europe/Sarajevo')
 	let {rows:blocked} = await psql.query(queryIsBlocked,[deviceId]);
-	let {oldBlockedUntil} = blocked[0].blockedUntil
-
 
 	if( blocked.length && (blocked[0].blockedUntil.toISOString() > currentDate.toISOString()  || blocked[0].perminentRestriction === true)) {
 		return next(new ErrorResponse(`Device is blocked`,401))
