@@ -4,26 +4,23 @@ const asyncHandler = require('../../utils/async')
 const ErrorResponse = require("../../utils/errorResponse");
 const queryPath = `${__dirname}/queries/`;
 const generateInsertSlsQuery = require('../../utils/generate-insert-sls-query')
+const {slsSchema} = require('./schema')
+const Joi = require('joi')
 
 // @desc Create sls 
-// @route POST /api/v1/sls/:id
+// @route POST /api/v1/sls
 // @acces Public
 
 const createSls = asyncHandler(async (req, res, next) => {
-	const deviceId = req.params.id;
-
 	const query = await loadQuery(`${queryPath}create-sls.sql`);
-	const { timeDuration,stakeLimit,hotPercentage,restrictionExpires } = req.body;
+	const { timeDuration,stakeLimit,hotPercentage,restrictionExpires,deviceId } = req.body;
 
-	if (!timeDuration || !stakeLimit || !hotPercentage || !restrictionExpires) {
-		return next( new ErrorResponse('Please provide valid sls values', 404))}
-	
-	if (timeDuration >= 5 && timeDuration <= 1440 && stakeLimit >= 1 && stakeLimit <= 100000 && hotPercentage >= 1 && hotPercentage <= 100 && restrictionExpires >1 ){
-		psql.query(query, [deviceId,timeDuration,stakeLimit,hotPercentage,restrictionExpires], (err, results) => {
-			if (err) return next( new ErrorResponse(`Something went wrong`, 404))
-			return res.status(201).json({status:true,data:results.rows[0],message: 'Sls successfully created !'})});
-	}else{
-		return next(new ErrorResponse('Please provide valid sls values', 400))}
+	await slsSchema.validateAsync({ timeDuration, stakeLimit,hotPercentage,restrictionExpires,deviceId });
+
+	psql.query(query, [deviceId,timeDuration,stakeLimit,hotPercentage,restrictionExpires], (err, results) => {
+		if (err) return next(new ErrorResponse(`Something went wrong`, 404))
+		return res.status(201).json({status:true,data:results.rows[0],message: 'Sls successfully created !'})});
+
 });
 
 // @desc Get sls 
@@ -33,15 +30,13 @@ const createSls = asyncHandler(async (req, res, next) => {
 const getSls = asyncHandler(async (req, res, next) => {
 	const id = parseInt(req.params.id);
 
-	if(isNaN(id)){
-		return next( new ErrorResponse(`Sls ID=NaN`, 404))}
+	if(isNaN(id)) return next( new ErrorResponse(`Sls ID=NaN`, 404))
 
 	const query = await loadQuery(`${queryPath}get-sls.sql`);
 
 	psql.query(query, [id], (err, results) => {
 		if (err || typeof results.rows[0] === 'undefined') return next(
-			new ErrorResponse(`No sls with id of ${id}`, 404)
-		  );
+			new ErrorResponse(`No sls with id of ${id}`, 404));
 		return res.status(200).json({status:true,data:results.rows[0],message: 'The Stake limit services you want !'})
 	});
 });
@@ -51,9 +46,11 @@ const getSls = asyncHandler(async (req, res, next) => {
 // @acces Public
 
 const getAllSls = asyncHandler(async (req, res, next) => {
+	const {limit,offset} = res.locals.pagination;
+
 	const query = await loadQuery(`${queryPath}get-all-sls.sql`);
 
-	psql.query(query, (err, results) => {
+	psql.query(query,[limit,offset],(err, results) => {
         if (err) return next(new ErrorResponse('Something went wrong', 404));
 		return res.status(200).json({status:true,data:results.rows,message: 'All the Stake limit services you want !'})
 	});
@@ -68,7 +65,8 @@ const updateSls= asyncHandler(async (req, res, next) => {
 	const query = generateInsertSlsQuery({ id, ...req.body });
 
 	psql.query(query,  async(err, results) => {
-		if (err) return next( new ErrorResponse('Something went wrong', 404));
+		if (err || typeof results.rows[0] === 'undefined') return next(
+			new ErrorResponse(`No sls with id of ${id}`, 404));
 		return res.status(201).json({status:true,data:results.rows[0],message: 'Sls successfully updated !'})
 		
 	});

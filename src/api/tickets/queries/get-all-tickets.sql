@@ -1,5 +1,8 @@
 SELECT 
     *
 FROM
-  sls_ticket 
-
+  sls_ticket
+LIMIT 
+  $1
+OFFSET 
+  $2

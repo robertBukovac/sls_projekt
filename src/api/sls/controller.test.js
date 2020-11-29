@@ -4,7 +4,7 @@ const app = require('../../app')
 
 
 describe('Stake Limit Service Controller test ', () => {
-    it('should return 200 & return array of tickets or empty array', async done => {
+    it('should return 200 & return array of sls or empty array', async done => {
       request(app)
         .get(`/api/v1/sls`)
         .expect('Content-Type', /json/)
@@ -26,7 +26,7 @@ describe('Stake Limit Service Controller test ', () => {
             done()
           })
       })
-    it('should return 201 & valid response for sls', async done => {
+    it('should return 201 & aaa valid response for sls', async done => {
         request(app)
         .put(`/api/v1/sls/1`)
         .send({
@@ -39,7 +39,7 @@ describe('Stake Limit Service Controller test ', () => {
             done()
         })
     })
-    it('should return 201 & valid response for sls', async done => {
+    it('should return 201 & bbb valid response for sls', async done => {
         request(app)
         .delete(`/api/v1/sls/2`)
         .expect(201)
@@ -49,14 +49,15 @@ describe('Stake Limit Service Controller test ', () => {
             done()
         })
     })
-    it('should return 201 & valid response for sls', async done => {
+    it('should return 201 & ccc  valid response for sls', async done => {
         request(app)
-        .post(`/api/v1/sls/2ceac662-9d52-4ddd-bf05-7ec04818615e`)
+        .post(`/api/v1/sls`)
         .send({
             timeDuration : 10,
             stakeLimit : 900,
             hotPercentage : 75,
-            restrictionExpires : 15
+            restrictionExpires : 15,
+            deviceId : '2ceac662-9d52-4ddd-bf05-7ec04818615e'
         })
         .expect(201)
         .end(function(err, res) {

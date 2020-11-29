@@ -23,22 +23,21 @@ paths:
           description: A JSON array of all stake limit services
           content:
             application/json:
-                  
-  /api/users/:id:
-    get:
-      tags: [Sls]
-      summary: Returns a sls with the requested id
-      responses:
-        '200':    # status code
-          description: A JSON sls 
-          content:
-            application/json:
     post:
       tags: [SLs]
       summary: Adds new Sls 
       responses:
         '200':    # status code
           description: A JSON array of sls
+          content:
+            application/json:
+  /api/v1/sls/:id:
+    get:
+      tags: [Sls]
+      summary: Returns a sls with the requested id
+      responses:
+        '200':    # status code
+          description: A JSON sls 
           content:
             application/json:
     put:
@@ -71,7 +70,15 @@ paths:
           description: A JSON array of tickets
           content:
             application/json:
-
+    post:
+      tags: [Ticket]
+      summary: Adds new Ticket
+      description: Adds new ticket
+      responses:
+        '200':    # status code
+          description: A JSON array with ticket
+          content:
+            application/json:
                   
   /api/v1/tickets/:id:
     get:
@@ -83,19 +90,7 @@ paths:
           description: A JSON file with ticket
           content:
             application/json:
-
-    post:
-      tags: [Ticket]
-      summary: Adds new Ticket
-      description: Adds new ticket
-      responses:
-        '200':    # status code
-          description: A JSON array with ticket
-          content:
-            application/json:
-
-
-
+              
 components:
   schemas:
     Sls:

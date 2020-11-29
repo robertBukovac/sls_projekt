@@ -22,7 +22,7 @@ describe('should test router', () => {
     expect(getSpy).toHaveBeenNthCalledWith(2, '/:id', Controllers.getTicket);
   });
   test('should test create TICKET', () => {
-    expect(getSpy).toHaveBeenNthCalledWith(3, '/:id', Controllers.createTicket);
+    expect(getSpy).toHaveBeenNthCalledWith(3, '/', Controllers.createTicket);
   });
 });
 

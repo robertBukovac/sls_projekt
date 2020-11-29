@@ -12,4 +12,7 @@ JOIN
   sls_device sd
 ON
   "sl"."deviceId" = "sd"."id"
-
+LIMIT 
+  $1
+OFFSET 
+  $2

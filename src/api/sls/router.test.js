@@ -21,7 +21,7 @@ describe('should test router', () => {
     expect(getSpy).toHaveBeenNthCalledWith(1,'/', Controllers.getAllSls);
   });
   test('should test post SLS', () => {
-    expect(getSpy).toHaveBeenNthCalledWith(2, '/:id', Controllers.createSls);
+    expect(getSpy).toHaveBeenNthCalledWith(2, '/', Controllers.createSls);
   });
   test('should test get SLS', () => {
     expect(getSpy).toHaveBeenNthCalledWith(3, '/:id', Controllers.getSls);
