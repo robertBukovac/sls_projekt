@@ -1,4 +1,4 @@
-DELETE FROM 
-  sls_blocked_device
-WHERE 
-  "id" = $1;
+UPDATE sls_blocked_device
+SET expired=true
+WHERE "deviceId"=$1;
+

@@ -35,9 +35,11 @@ CREATE TABLE sls_ticket (
 
 DROP TABLE IF EXISTS sls_blocked_device CASCADE;
 CREATE TABLE sls_blocked_device (
-  "id" UUID NOT NULL,
+  "id" INT GENERATED ALWAYS AS IDENTITY,
+  "deviceId" UUID NOT NULL,
   "blockedUntil" TIMESTAMP NOT NULL,
-  "perminentRestriction" BOOLEAN NOT NULL DEFAULT false,
+  "perminentRestriction" BOOLEAN DEFAULT false,
+  "expired" BOOLEAN DEFAULT false,
   PRIMARY KEY("id")
 );
 

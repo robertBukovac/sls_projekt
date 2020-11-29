@@ -17,7 +17,7 @@ INSERT INTO sls_sls (
   "hotPercentage",
   "restrictionExpires"
 ) VALUES 
-  ('3c144f2f-bc35-4ecd-8fa3-b2a9f012c284',20, 1000, 75, 15), 
+  ('3c144f2f-bc35-4ecd-8fa3-b2a9f012c284',20, 1000, 75, 2), 
   ('2ceac662-9d52-4ddd-bf05-7ec04818615e',15, 950, 80, 10),
   ('0005746e-5b75-4190-9f5b-15e715c0022e',20, 1000, 80, 14);
 

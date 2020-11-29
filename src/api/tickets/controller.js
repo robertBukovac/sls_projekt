@@ -27,17 +27,27 @@ const createTicket = asyncHandler(async (req, res, next) => {
 	let currentDate = moment().tz('Europe/Sarajevo')
 	let {rows:blocked} = await psql.query(queryIsBlocked,[deviceId]);
 
-	if( blocked.length && (blocked[0].blockedUntil.toISOString() > currentDate.toISOString()  || blocked[0].perminentRestriction === true)) {
-		return next(new ErrorResponse(`Device is blocked`,401))
-	}else {
-		await psql.query(queryDrop,[deviceId]);
-	}
-	
+
+	let oldBlockedUntil;
+	if(blocked.length) {
+		if(blocked[0].blockedUntil.toISOString() > currentDate.toISOString()  || blocked[0].perminentRestriction === true) {
+			return next(new ErrorResponse(`Device is blocked`,401))
+		}else{
+			oldBlockedUntil = blocked[0].blockedUntil;
+			await psql.query(queryDrop,[deviceId]);
+		}}
+
 	await ticketSchema.validateAsync({ stake, deviceId });
 
 	// Get Sls
 	const { rows:slsRows } = await  psql.query(querySls, [deviceId]);
-	const { timeDuration,stakeLimit,hotPercentage,restrictionExpires} = slsRows[0];
+	let { timeDuration,stakeLimit,hotPercentage,restrictionExpires} = slsRows[0];
+
+	/// 
+	if (typeof oldBlockedUntil !== 'undefined') {
+		const resultInMinutes = Math.round((currentDate - oldBlockedUntil) / 60000);
+		timeDuration = (resultInMinutes < timeDuration) ? resultInMinutes : timeDuration 
+	}
 
 	// Get Tickets from device 
 	const { rows:ticketRows } = await  psql.query(queryTicket, [deviceId,timeDuration]);
@@ -45,6 +55,7 @@ const createTicket = asyncHandler(async (req, res, next) => {
 	// Sum of stakes
 	const hot = (hotPercentage/100) * stakeLimit;
 	let sum = ticketRows.reduce((acc,curr) => acc + curr.stake,stake);
+	console.log(sum)
 	const deviceState = sum < hot ? "OK" : (sum >= hot && sum < stakeLimit ? "HOT" : "BLOCKED");
 
 	// time offset restrictionExpires

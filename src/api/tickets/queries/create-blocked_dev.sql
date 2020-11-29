@@ -1,6 +1,6 @@
 INSERT INTO 
   sls_blocked_device (
-    "id",
+    "deviceId",
     "blockedUntil",
     "perminentRestriction"
   ) 

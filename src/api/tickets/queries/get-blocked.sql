@@ -3,5 +3,7 @@ SELECT
 FROM
   sls_blocked_device
 WHERE
-  "id" = $1;
+  "deviceId" = $1
+AND 
+  "expired" = false;
 
